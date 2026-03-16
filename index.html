@@ -5,16 +5,22 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Advanced JavaScript Techniques</title>
   
+  <!-- Tailwind CSS CDN -->
   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
   
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="dist/output.css">
+
+
+  <!-- Alpine.js Anchor CDN -->
+  <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/anchor@3.x.x/dist/cdn.min.js"></script>
   <!-- Alpine.js CDN -->
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
 <body x-data="{ 
   cartOpen: false,
   programmingOpen: false,
+  programmingTabletOpen: false,
   navOpen: false,
   cart: [
     { id: 1, imageSrcs: ['assets/book3.png'], title: 'Learning Alpine.js', amount: 1, price: 24.99 },
@@ -66,9 +72,9 @@
   }
  }" class="bg-background min-h-screen">
   <!-- Mobile Header -->
-  <header class="flex-col xs:hidden justify-center align-center w-full bg-white shadow px-6 py-4">
+  <header class="flex-col xs:hidden justify-center items-center w-full bg-white shadow px-6 py-4">
     <h1 class="text-xl font-bold text-gray-900 text-center">The Dev Bookstore</h1>
-    <div class="w-full flex justify-between align-center">
+    <div class="w-full flex justify-between items-center">
       <div>
         <button @click="navOpen = true">
           <img src="assets/menu.svg" />
@@ -77,13 +83,13 @@
       <div class="flex gap-2">
         <!-- Cart button-->
         <button @click.prevent="cartOpen = true" class="inline-flex gap-1 items-center cursor-pointer px-4 py-2 bg-neutral-100 rounded-full hover:bg-slate-300 transition font-medium">
-          <img src="assets/user.png" />
+          <img src="assets/cart.svg" />
           <span class="hidden md:inline">Cart</span>
         </button>
         <!-- Account Dropdown -->
         <div class="relative" x-data="{ open: false }">
           <div @click.prevent="open = !open" class="inline-flex gap-1 items-center cursor-pointer px-4 py-2 bg-neutral-100 rounded-full hover:bg-slate-300 transition font-medium">
-            <img src="assets/user.png" />
+            <img src="assets/user.svg" />
             <span class="hidden md:inline">Account</span>
           </div>
           <div x-show="open" @click.away="open = false" x-transition class="absolute right-0 mt-2 w-40 bg-white border border-gray-200 rounded shadow-lg z-10">
@@ -96,51 +102,66 @@
     </div>
   </header>
   <!-- Desktop/Tablet Header -->
-  <header class="hidden xs:block w-full bg-white shadow px-6 py-4 relative">
+  <header x-ref="header" class="hidden xs:block w-full bg-white shadow px-6 py-4 relative">
     <div class="w-full flex items-center justify-between">
-      <div class="flex gap-1">
+      <!-- Logo and mobile menu button(which is shown below xl screens) -->
+      <div class="flex items-center gap-1">
         <div class="visible xl:hidden" @click="navOpen = true">
           <img src="assets/menu.svg" />
         </div>
-        <h1 class="text-xl font-bold text-gray-900">The Dev Bookstore</h1>
+        <h1 class="text-xl text-center font-bold text-gray-900">The Dev Bookstore</h1>
       </div>
       
+      <!-- menu items -->
       <div class="hidden xl:flex gap-10">
-        <div class="flex gap-1" @mouseenter="programmingOpen = true" @mouseleave="programmingOpen = false">
+        <div class="flex items-center gap-1 cursor-pointer" @click.prevent="programmingOpen = !programmingOpen">
           <a href="#" class="header-link">Programming</a>
           <img src="assets/chevron-down.svg"/>
         </div>
 
-        <div class="flex gap-1">
+        <div class="flex items-center gap-1 cursor-pointer">
           <a href="#" class="header-link">Computers & technology</a>
           <img src="assets/chevron-down.svg"/>
         </div>
         
-        <div class="flex gap-1">
+        <div class="flex items-center gap-1 cursor-pointer">
           <a href="#" class="header-link">Design basics</a>
           <img src="assets/chevron-down.svg"/>
         </div>
         
-        <a href="#" class="header-link">About us</a>
-        <a href="#" class="header-link">Contact</a>
+        <div class="flex items-center gap-1">
+          <a href="#" class="header-link">About us</a>
+        </div>
+        <div class="flex items-center gap-1">
+          <a href="#" class="header-link">Contact</a>
+        </div>
       </div>
       <div class="flex gap-2">
         <!-- Cart button-->
         <button @click.prevent="cartOpen = true" class="inline-flex gap-1 items-center cursor-pointer px-4 py-2 bg-neutral-100 rounded-full hover:bg-slate-300 transition font-medium">
-          <img src="assets/user.png" />
+          <img src="assets/cart.svg" />
           <span class="hidden md:inline">Cart</span>
         </button>
         <!-- Account Dropdown -->
         <div class="relative" x-data="{ open: false }">
           <div @click.prevent="open = !open" class="inline-flex gap-1 items-center cursor-pointer px-4 py-2 bg-neutral-100 rounded-full hover:bg-slate-300 transition font-medium">
-            <img src="assets/user.png" />
+            <img src="assets/user.svg" />
             <span class="hidden md:inline">Account</span>
           </div>
-          <div x-show="open" @click.away="open = false" x-transition class="absolute right-0 mt-2 w-40 bg-white border border-gray-200 rounded shadow-lg z-10">
+          <div x-show="open" @click.away="open = false" x-transition class="absolute right-0 mt-2 py-6 px-4 w-40 bg-white border border-gray-200 rounded shadow-lg z-10">
             <!-- Arrow -->
             <div class="absolute -top-2 right-4 w-3 h-3 bg-white border-l border-t border-gray-200 rotate-45"></div>
-            <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Sign In</a>
-            <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Sign Out</a>
+            <div class="flex flex-col w-full gap-6">
+              <div class="flex gap-1 items-center">
+                <img src="assets/log-in.svg" class="w-6 h-6" />
+                <a href="#" class="block">Log In</a>
+              </div>
+              
+              <div class="flex gap-1 items-center">
+                <img src="assets/sign-up.svg" class="w-6 h-6" />
+                <a href="#" class="block">Sign Up</a>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -149,44 +170,37 @@
   </header>
 
   <!-- Programming Submenu -->
-  <div x-show="programmingOpen" x-cloak class="absolute top-full left-0 w-full bg-white shadow-lg border-t z-30" @mouseenter="programmingOpen = true" @mouseleave="programmingOpen = false">
+  <div x-show="programmingOpen" x-transition x-anchor.bottom-start="$refs.header" x-cloak class="w-full bg-white shadow-lg border-t z-30" @mouseenter="programmingOpen = true" @mouseleave="programmingOpen = false">
     <div class="max-w-5xl mx-auto py-8 px-6">
       <div class="grid grid-cols-4 gap-8">
         <div>
-          <h3 class="font-semibold text-gray-900 mb-4">Languages</h3>
           <ul class="space-y-2">
-            <li><a href="#" class="text-gray-600 hover:text-primary">JavaScript</a></li>
-            <li><a href="#" class="text-gray-600 hover:text-primary">Python</a></li>
-            <li><a href="#" class="text-gray-600 hover:text-primary">Java</a></li>
-            <li><a href="#" class="text-gray-600 hover:text-primary">C++</a></li>
+            <li><a class="header-link" href="#">APIs & Operating Environments</a></li>
+            <li><a class="header-link" href="#">Algorithms</a></li>
+            <li><a class="header-link" href="#">Apple programming</a></li>
+            <li><a class="header-link" href="#">Cross-platform Development</a></li>
+            <li><a class="header-link" href="#">Functional</a></li>
           </ul>
         </div>
         <div>
-          <h3 class="font-semibold text-gray-900 mb-4">Frameworks</h3>
           <ul class="space-y-2">
-            <li><a href="#" class="text-gray-600 hover:text-primary">React</a></li>
-            <li><a href="#" class="text-gray-600 hover:text-primary">Vue.js</a></li>
-            <li><a href="#" class="text-gray-600 hover:text-primary">Angular</a></li>
-            <li><a href="#" class="text-gray-600 hover:text-primary">Node.js</a></li>
+            <li><a class="header-link" href="#">Game programming</a></li>
+            <li><a class="header-link" href="#">Graphics and multimedia</a></li>
+            <li><a class="header-link" href="#">Introductory & Beginning</a></li>
+            <li><a class="header-link" href="#">Language & Tools</a></li>
+            <li><a class="header-link" href="#">Microsoft Programming</a></li>
           </ul>
         </div>
         <div>
-          <h3 class="font-semibold text-gray-900 mb-4">Databases</h3>
           <ul class="space-y-2">
-            <li><a href="#" class="text-gray-600 hover:text-primary">SQL</a></li>
-            <li><a href="#" class="text-gray-600 hover:text-primary">MongoDB</a></li>
-            <li><a href="#" class="text-gray-600 hover:text-primary">PostgreSQL</a></li>
-            <li><a href="#" class="text-gray-600 hover:text-primary">Redis</a></li>
+            <li><a class="header-link" href="#">Mobile Apps</a></li>
+            <li><a class="header-link" href="#">Parallel Programming</a></li>
+            <li><a class="header-link" href="#">Software Design, Testing & Engineering</a></li>
+            <li><a class="header-link" href="#">Web Programming</a></li>
           </ul>
         </div>
         <div>
-          <h3 class="font-semibold text-gray-900 mb-4">Tools</h3>
-          <ul class="space-y-2">
-            <li><a href="#" class="text-gray-600 hover:text-primary">Git</a></li>
-            <li><a href="#" class="text-gray-600 hover:text-primary">Docker</a></li>
-            <li><a href="#" class="text-gray-600 hover:text-primary">AWS</a></li>
-            <li><a href="#" class="text-gray-600 hover:text-primary">Kubernetes</a></li>
-          </ul>
+          <img src="assets/web-book-submenu.png" />
         </div>
       </div>
     </div>
@@ -197,7 +211,7 @@
       <div class="grid md:grid-cols-2 gap-8">
         <!-- Book Gallery -->
         <div class="relative">
-          <img :src="book.imageSrcs[currentImageIndex]" alt="Book cover" class="w-full h-96 object-cover rounded-lg shadow-lg" />
+          <img :src="book.imageSrcs[currentImageIndex]" alt="Book cover" class="w-full h-100 object-cover rounded-lg shadow-lg" />
           <button @click="prevImage" class="absolute left-2 top-1/2 transform -translate-y-1/2 bg-white/80 hover:bg-white rounded-full p-2 shadow">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
           </button>
@@ -230,8 +244,8 @@
             <label class="block text-sm font-medium text-gray-700 mb-2">Quantity</label>
             <div class="flex items-center justify-between">
               <div x-data="{ editing: false }" class="inline-flex items-center gap-2 rounded-full bg-slate-100 px-4 py-2">
-                <button type="button" @click="selectedAmount = Math.max(1, selectedAmount - 1)" class="p-2 rounded-full hover:bg-slate-200">
-                  <img src="assets/chevron-down.svg" alt="Decrease" class="h-4 w-4" />
+                <button type="button" @click="selectedAmount = Math.max(1, selectedAmount - 1)" class="cursor-pointer p-2 rounded-full hover:bg-slate-200">
+                  <img src="assets/chevron-down.svg" alt="Decrease" class="h-6 w-6" />
                 </button>
                 <div class="flex items-center gap-2">
                   <span
@@ -251,16 +265,16 @@
                     @keydown.enter="editing = false"
                   />
                 </div>
-                <button type="button" @click="selectedAmount = selectedAmount + 1" class="p-2 rounded-full hover:bg-slate-200">
-                  <img src="assets/chevron-up.svg" alt="Increase" class="h-4 w-4" />
+                <button type="button" @click="selectedAmount = selectedAmount + 1" class="cursor-pointer p-2 rounded-full hover:bg-slate-200">
+                  <img src="assets/chevron-up.svg" alt="Increase" class="h-6 w-6" />
                 </button>
               </div>
-              <button class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-3 py-2 rounded-full text-sm font-medium transition-colors">
+              <button class="cursor-pointer bg-gray-200 hover:bg-gray-300 text-gray-700 px-3 py-2 rounded-full text-sm font-medium transition-colors">
                 <img src="assets/wishlist.svg" alt="Wishlist" />
               </button>
             </div>
           </div>
-          <button @click="addToCart(book, selectedAmount)" class="w-full bg-primary hover:bg-orange-700 text-light-text font-semibold py-3 px-6 rounded-full transition-colors">
+          <button @click="addToCart(book, selectedAmount)" class="w-full cursor-pointer bg-primary hover:bg-orange-700 active:bg-orange-800 text-light-text font-semibold py-3 px-6 rounded-full transition-colors">
             Add to Cart
           </button>
         </div>
@@ -292,13 +306,13 @@
               <div class="flex items-start justify-between gap-4">
                 <h3 class="text-sm font-semibold text-gray-900" x-text="item.title"></h3>
                 <button @click="removeItem(item.id)" class="text-gray-400 hover:text-gray-700 cursor-pointer">
-                  <img src="assets/trash.svg" alt="Delete" class="h-4 w-4" />
+                  <img src="assets/trash.svg" alt="Delete" class="h-6 w-6" />
                 </button>
               </div>
               <div class="mt-2 flex items-center justify-between gap-4">
                 <div x-data="{ editing: false }" class="inline-flex items-center gap-1 rounded-full bg-slate-100 px-2 py-1">
-                  <button type="button" @click="item.amount = Math.max(1, item.amount - 1)" class="p-1 rounded-full hover:bg-slate-200">
-                    <img src="assets/chevron-down.svg" alt="Decrease" class="h-3 w-3" />
+                  <button type="button" @click="item.amount = Math.max(1, item.amount - 1)" class="cursor-pointer p-1 rounded-full hover:bg-slate-200">
+                    <img src="assets/chevron-down.svg" alt="Decrease" class="h-6 w-6" />
                   </button>
                   <div class="flex items-center gap-2">
                     <span
@@ -318,8 +332,8 @@
                       @keydown.enter="editing = false"
                     />
                   </div>
-                  <button type="button" @click="item.amount = item.amount + 1" class="p-1 rounded-full hover:bg-slate-200">
-                    <img src="assets/chevron-up.svg" alt="Increase" class="h-3 w-3" />
+                  <button type="button" @click="item.amount = item.amount + 1" class="cursor-pointer p-1 rounded-full hover:bg-slate-200">
+                    <img src="assets/chevron-up.svg" alt="Increase" class="h-6 w-6" />
                   </button>
                 </div>
                 <div class="text-sm font-semibold text-blue-800">
@@ -338,11 +352,11 @@
           <span class="text-lg font-semibold text-blue-800">€<span x-text="subtotal.toFixed(2)"></span></span>
         </div>
 
-        <button class="rounded-full bg-primary hover:bg-orange-700 transition-colors w-full py-2 mt-4 text-light-text font-medium cursor-pointer">
+        <button class="rounded-full bg-primary hover:bg-orange-700 active:bg-orange-800 transition-colors w-full py-2 mt-4 text-light-text font-medium cursor-pointer">
           Proceed to checkout
         </button>
 
-        <div class="w-full flex justify-center align-center py-2">
+        <div class="w-full flex justify-center items-center py-2">
           <a href="#">View and Edit cart</a>
         </div>
       </div>
@@ -363,49 +377,27 @@
       <div class="p-6 h-full">
         <nav class="space-y-4 h-full">
           <div>
-            <button @click="programmingOpen = !programmingOpen" class="flex items-center justify-between w-full text-left font-bold">
+            <button @click="programmingTabletOpen = !programmingTabletOpen" class="flex items-center justify-between w-full text-left font-bold">
               Programming
-              <svg class="w-5 h-5 transition-transform" :class="programmingOpen ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+              <svg class="w-5 h-5 transition-transform" :class="programmingTabletOpen ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
             </button>
-            <div x-show="programmingOpen" x-transition class="mt-2 ml-4 space-y-2">
-              <div class="grid grid-cols-2 gap-4">
-                <div>
-                  <h4 class="font-medium text-gray-900 mb-2">Languages</h4>
-                  <ul class="space-y-1">
-                    <li><a class="header-link" href="#" >JavaScript</a></li>
-                    <li><a class="header-link" href="#" >Python</a></li>
-                    <li><a class="header-link" href="#" >Java</a></li>
-                    <li><a class="header-link" href="#" >C++</a></li>
-                  </ul>
-                </div>
-                <div>
-                  <h4 class="font-medium text-gray-900 mb-2">Frameworks</h4>
-                  <ul class="space-y-1">
-                    <li><a class="header-link" href="#" >React</a></li>
-                    <li><a class="header-link" href="#" >Vue.js</a></li>
-                    <li><a class="header-link" href="#" >Angular</a></li>
-                    <li><a class="header-link" href="#" >Node.js</a></li>
-                  </ul>
-                </div>
-                <div>
-                  <h4 class="font-medium text-gray-900 mb-2">Databases</h4>
-                  <ul class="space-y-1">
-                    <li><a class="header-link" href="#" >SQL</a></li>
-                    <li><a class="header-link" href="#" >MongoDB</a></li>
-                    <li><a class="header-link" href="#" >PostgreSQL</a></li>
-                    <li><a class="header-link" href="#" >Redis</a></li>
-                  </ul>
-                </div>
-                <div>
-                  <h4 class="font-medium text-gray-900 mb-2">Tools</h4>
-                  <ul class="space-y-1">
-                    <li><a class="header-link" href="#" >Git</a></li>
-                    <li><a class="header-link" href="#" >Docker</a></li>
-                    <li><a class="header-link" href="#" >AWS</a></li>
-                    <li><a class="header-link" href="#">Kubernetes</a></li>
-                  </ul>
-                </div>
-              </div>
+            <div x-show="programmingTabletOpen" x-transition class="mt-2 ml-4 space-y-2 w-full">
+                <ul class="space-y-1 w-full">
+                  <li><a class="header-link" href="#">APIs & Operating Environments</a></li>
+                  <li><a class="header-link" href="#">Algorithms</a></li>
+                  <li><a class="header-link" href="#">Apple programming</a></li>
+                  <li><a class="header-link" href="#">Cross-platform Development</a></li>
+                  <li><a class="header-link" href="#">Functional</a></li>
+                  <li><a class="header-link" href="#">Game programming</a></li>
+                  <li><a class="header-link" href="#">Graphics and multimedia</a></li>
+                  <li><a class="header-link" href="#">Introductory & Beginning</a></li>
+                  <li><a class="header-link" href="#">Language & Tools</a></li>
+                  <li><a class="header-link" href="#">Microsoft Programming</a></li>
+                  <li><a class="header-link" href="#">Mobile Apps</a></li>
+                  <li><a class="header-link" href="#">Parallel Programming</a></li>
+                  <li><a class="header-link" href="#">Software Design, Testing & Engineering</a></li>
+                  <li><a class="header-link" href="#">Web Programming</a></li>
+                </ul>
             </div>
           </div>
           <div class="flex items-center justify-between w-full text-left font-bold">
@@ -416,8 +408,12 @@
             <a class="header-link" href="#">Design basics</a>
             <svg class="w-5 h-5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
           </div>
-          <a class="header-link" href="#">About us</a>
-          <a class="header-link" href="#">Contact</a>
+          <div class="flex items-center justify-between w-full text-left font-bold">
+            <a class="header-link" href="#">About us</a>
+          </div>
+          <div class="flex items-center justify-between w-full text-left font-bold">
+            <a class="header-link" href="#">Contact</a>
+          </div>
         </nav>
       </div>
     </aside>
